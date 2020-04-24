@@ -16,21 +16,59 @@ platform:
   arch: arm64
 
 steps:
+  - name: build-kibana-nosecurity
+    image: plugins/docker
+    volumes:
+      - name: kibana-cache
+        path: /var/lib/docker/
+    settings:
+      <<: *common
+      auto_tag_suffix: nosecurity-arm64
+      target: nosecurity
+      purge: false
+      repo: virb3/kibana
+      context: kibana/
+      dockerfile: kibana/Dockerfile
+
   - name: build-kibana
     image: plugins/docker
+    volumes:
+      - name: kibana-cache
+        path: /var/lib/docker/
     settings:
       <<: *common
       repo: virb3/kibana
       context: kibana/
       dockerfile: kibana/Dockerfile
+    depends_on:
+      - build-kibana-nosecurity
+
+  - name: build-elasticsearch-nosecurity
+    image: plugins/docker
+    volumes:
+      - name: elasticsearch-cache
+        path: /var/lib/docker/
+    settings:
+      <<: *common
+      auto_tag_suffix: nosecurity-arm64
+      target: nosecurity
+      purge: false
+      repo: virb3/elasticsearch
+      context: elasticsearch/
+      dockerfile: elasticsearch/Dockerfile
 
   - name: build-elasticsearch
     image: plugins/docker
+    volumes:
+      - name: elasticsearch-cache
+        path: /var/lib/docker/
     settings:
       <<: *common
       repo: virb3/elasticsearch
       context: elasticsearch/
       dockerfile: elasticsearch/Dockerfile
+    depends_on:
+      - build-elasticsearch-nosecurity
 
   - name: build-logstash
     image: plugins/docker
@@ -46,6 +84,12 @@ steps:
       - build-kibana
       - build-elasticsearch
       - build-logstash
+
+volumes:
+  - name: kibana-cache
+    temp: {}
+  - name: elasticsearch-cache
+    temp: {}
 
 trigger:
   event:

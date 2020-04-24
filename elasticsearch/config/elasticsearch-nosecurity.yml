@@ -3,6 +3,3 @@ network.host: 0.0.0.0
 
 # unsupported on arm64
 xpack.ml.enabled: false
-
-# conflicts with Open Distro Security
-xpack.security.enabled: false

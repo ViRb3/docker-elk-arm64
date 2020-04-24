@@ -72,12 +72,17 @@ CMD ["/usr/local/bin/kibana-docker"]
 ################################################################################
 # Add Open Distro plugins
 ################################################################################
+FROM base AS nosecurity
 
-FROM base
-
-RUN kibana-plugin install https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/releases/download/v1.6.0.0/opendistro_security_kibana_plugin-1.6.0.0.zip && \
-    kibana-plugin install https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/releases/download/v1.6.0.0/opendistro-alerting-1.6.0.0.zip && \
+RUN kibana-plugin install https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/releases/download/v1.6.0.0/opendistro-alerting-1.6.0.0.zip && \
     kibana-plugin install https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/releases/download/v1.6.0.0/opendistro_index_management_kibana-1.6.0.0.zip
+
+################################################################################
+# Add Open Distro security
+################################################################################
+FROM nosecurity
+
+RUN kibana-plugin install https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/releases/download/v1.6.0.0/opendistro_security_kibana_plugin-1.6.0.0.zip
 
 ################################################################################
 # End of multi-stage Dockerfile

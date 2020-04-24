@@ -29,7 +29,8 @@ RUN curl -sL https://corretto.aws/downloads/latest/amazon-corretto-11-aarch64-li
     mv /usr/share/elasticsearch/amazon* /usr/share/elasticsearch/jdk
 RUN mkdir -p config data logs
 RUN chmod 0775 config data logs
-COPY config/elasticsearch.yml config/log4j2.properties config/
+COPY config/elasticsearch-nosecurity.yml config/elasticsearch.yml
+COPY config/log4j2.properties config/
 RUN chmod 0660 config/elasticsearch.yml config/log4j2.properties
 
 ################################################################################
@@ -73,17 +74,24 @@ CMD ["eswrapper"]
 ################################################################################
 # Add Open Distro plugins
 ################################################################################
+FROM base AS nosecurity
 
-FROM base
+RUN elasticsearch-plugin install --batch https://github.com/opendistro-for-elasticsearch/alerting/releases/download/v1.6.0.0/opendistro_alerting-1.6.0.0.zip && \
+    elasticsearch-plugin install --batch https://github.com/opendistro-for-elasticsearch/job-scheduler/releases/download/v1.6.0.0/opendistro-job-scheduler-1.6.0.0.zip && \
+    elasticsearch-plugin install --batch https://github.com/opendistro-for-elasticsearch/index-management/releases/download/v1.6.0.0/opendistro_index_management-1.6.0.0.zip
+
+################################################################################
+# Add Open Distro security
+################################################################################
+FROM nosecurity
 
 RUN curl -sL -o artifacts.zip https://github.com/opendistro-for-elasticsearch/security/releases/download/v1.6.0.0/artifacts.zip && \
     unzip -p artifacts.zip artifacts/opendistro_security-1.6.0.0.zip > plugin.zip && \
     elasticsearch-plugin install --batch file://$PWD/plugin.zip && \
     rm artifacts.zip plugin.zip && \
-    chmod +x /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh && \
-    elasticsearch-plugin install --batch https://github.com/opendistro-for-elasticsearch/alerting/releases/download/v1.6.0.0/opendistro_alerting-1.6.0.0.zip && \
-    elasticsearch-plugin install --batch https://github.com/opendistro-for-elasticsearch/job-scheduler/releases/download/v1.6.0.0/opendistro-job-scheduler-1.6.0.0.zip && \
-    elasticsearch-plugin install --batch https://github.com/opendistro-for-elasticsearch/index-management/releases/download/v1.6.0.0/opendistro_index_management-1.6.0.0.zip
+    chmod +x /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh
+
+COPY config/elasticsearch.yml config/elasticsearch.yml
 
 ################################################################################
 # End of multi-stage Dockerfile
