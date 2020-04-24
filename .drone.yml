@@ -1,0 +1,52 @@
+kind: pipeline
+name: default
+
+x-common: &common
+  username:
+    from_secret: username
+  password:
+    from_secret: password
+  tags: latest
+  auto_tag: true
+  auto_tag_suffix: arm64
+  force_tag: true
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+  - name: build-kibana
+    image: plugins/docker
+    settings:
+      <<: *common
+      repo: virb3/kibana
+      context: kibana/
+      dockerfile: kibana/Dockerfile
+
+  - name: build-elasticsearch
+    image: plugins/docker
+    settings:
+      <<: *common
+      repo: virb3/elasticsearch
+      context: elasticsearch/
+      dockerfile: elasticsearch/Dockerfile
+
+  - name: build-logstash
+    image: plugins/docker
+    settings:
+      <<: *common
+      repo: virb3/logstash
+      context: logstash/
+      dockerfile: logstash/Dockerfile
+
+  - name: finish
+    image: alpine
+    depends_on:
+      - build-kibana
+      - build-elasticsearch
+      - build-logstash
+
+trigger:
+  event:
+    - tag
