@@ -36,6 +36,8 @@ kibana_vars=(
     elasticsearch.sniffOnConnectionFault
     elasticsearch.sniffOnStart
     elasticsearch.ssl.alwaysPresentCertificate
+    elasticsearch.ssl.ca
+    elasticsearch.ssl.cert
     elasticsearch.ssl.certificate
     elasticsearch.ssl.certificateAuthorities
     elasticsearch.ssl.key
@@ -45,7 +47,24 @@ kibana_vars=(
     elasticsearch.ssl.truststore.path
     elasticsearch.ssl.truststore.password
     elasticsearch.ssl.verificationMode
+    elasticsearch.ssl.verify
     elasticsearch.startupTimeout
+    elasticsearch.tribe.customHeaders
+    elasticsearch.tribe.password
+    elasticsearch.tribe.pingTimeout
+    elasticsearch.tribe.requestHeadersWhitelist
+    elasticsearch.tribe.requestTimeout
+    elasticsearch.tribe.ssl.ca
+    elasticsearch.tribe.ssl.cert
+    elasticsearch.tribe.ssl.certificate
+    elasticsearch.tribe.ssl.certificateAuthorities
+    elasticsearch.tribe.ssl.key
+    elasticsearch.tribe.ssl.keyPassphrase
+    elasticsearch.tribe.ssl.verificationMode
+    elasticsearch.tribe.ssl.verify
+    elasticsearch.tribe.url
+    elasticsearch.tribe.username
+    elasticsearch.hosts
     elasticsearch.username
     i18n.locale
     interpreter.enableInVisualize
@@ -243,6 +262,9 @@ kibana_vars=(
     telemetry.optIn
     telemetry.optInStatusUrl
     telemetry.sendUsageFrom
+    opendistro_security.multitenancy.enabled
+    opendistro_security.multitenancy.tenants.preferred
+    opendistro_security.readonly_mode.roles
 )
 
 longopts=''

@@ -70,4 +70,16 @@ if [[ "$(id -u)" == "0" ]]; then
   fi
 fi
 
+if [[ -d "/usr/share/elasticsearch/plugins/opendistro_security" ]]; then
+    # Install Demo certifactes for Security Plugin and update the elasticsearch.yml
+    # file to use those certificates.
+    /usr/share/elasticsearch/plugins/opendistro_security/tools/install_demo_configuration.sh -y -i -s
+fi
+
+if [[ -d "/usr/share/elasticsearch/plugins/opendistro_performance_analyzer" ]]; then
+    CLK_TCK=`/usr/bin/getconf CLK_TCK`
+    ES_JAVA_OPTS="-Djava.security.policy=file:///usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/es_security.policy -Dclk.tck=$CLK_TCK -Djdk.attach.allowAttachSelf=true $ES_JAVA_OPTS"
+    /usr/bin/supervisord -c /usr/share/elasticsearch/plugins/opendistro_performance_analyzer/pa_config/supervisord.conf
+fi
+
 run_as_other_user_if_needed /usr/share/elasticsearch/bin/elasticsearch

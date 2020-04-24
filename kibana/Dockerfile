@@ -29,7 +29,7 @@ RUN find /usr/share/kibana -type d -exec chmod g+s {} \;
 # Build stage 1
 # Copy prepared files from the previous stage and complete the image.
 ################################################################################
-FROM centos:7
+FROM centos:7 AS base
 EXPOSE 5601
 
 # Add Reporting dependencies.
@@ -68,3 +68,17 @@ LABEL org.label-schema.schema-version="1.0" org.label-schema.vendor="Elastic" or
 ENTRYPOINT ["/usr/local/bin/dumb-init", "--"]
 
 CMD ["/usr/local/bin/kibana-docker"]
+
+################################################################################
+# Add Open Distro plugins
+################################################################################
+
+FROM base
+
+RUN kibana-plugin install https://github.com/opendistro-for-elasticsearch/security-kibana-plugin/releases/download/v1.6.0.0/opendistro_security_kibana_plugin-1.6.0.0.zip && \
+    kibana-plugin install https://github.com/opendistro-for-elasticsearch/alerting-kibana-plugin/releases/download/v1.6.0.0/opendistro-alerting-1.6.0.0.zip && \
+    kibana-plugin install https://github.com/opendistro-for-elasticsearch/index-management-kibana-plugin/releases/download/v1.6.0.0/opendistro_index_management_kibana-1.6.0.0.zip
+
+################################################################################
+# End of multi-stage Dockerfile
+################################################################################
