@@ -21,10 +21,12 @@ RUN groupadd -g 1000 elasticsearch &&     adduser -u 1000 -g 1000 -d /usr/share/
 
 WORKDIR /usr/share/elasticsearch
 
-RUN cd /opt && curl --retry 8 -s -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.1-linux-x86_64.tar.gz && cd -
+RUN cd /opt && curl --retry 8 -s -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.1-no-jdk-linux-x86_64.tar.gz && cd -
 
-RUN tar zxf /opt/elasticsearch-7.6.1-linux-x86_64.tar.gz --strip-components=1
+RUN tar zxf /opt/elasticsearch-7.6.1-no-jdk-linux-x86_64.tar.gz --strip-components=1
 RUN grep ES_DISTRIBUTION_TYPE=tar /usr/share/elasticsearch/bin/elasticsearch-env     && sed -i -e 's/ES_DISTRIBUTION_TYPE=tar/ES_DISTRIBUTION_TYPE=docker/' /usr/share/elasticsearch/bin/elasticsearch-env
+RUN curl -sL https://corretto.aws/downloads/latest/amazon-corretto-11-aarch64-linux-jdk.tar.gz | tar -C /usr/share/elasticsearch -zxf - && \
+    mv /usr/share/elasticsearch/amazon* /usr/share/elasticsearch/jdk
 RUN mkdir -p config data logs
 RUN chmod 0775 config data logs
 COPY config/elasticsearch.yml config/log4j2.properties config/

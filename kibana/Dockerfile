@@ -13,6 +13,11 @@ RUN cd /opt && curl --retry 8 -s -L -O https://artifacts.elastic.co/downloads/ki
 RUN mkdir /usr/share/kibana
 WORKDIR /usr/share/kibana
 RUN tar --strip-components=1 -zxf /opt/kibana-7.6.1-linux-x86_64.tar.gz
+
+# replace amd64 node with arm64
+RUN rm -rf /usr/share/kibana/node/* && \
+    curl -sL https://nodejs.org/dist/v10.19.0/node-v10.19.0-linux-arm64.tar.gz | tar -C /usr/share/kibana/node/ --strip-components=1 -xzf -
+
 # Ensure that group permissions are the same as user permissions.
 # This will help when relying on GID-0 to run Kibana, rather than UID-1000.
 # OpenShift does this, for example.
@@ -31,8 +36,8 @@ EXPOSE 5601
 RUN yum update -y && yum install -y fontconfig freetype shadow-utils && yum clean all
 
 # Add an init process, check the checksum to make sure it's a match
-RUN curl -L -o /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64
-RUN echo "37f2c1f0372a45554f1b89924fbb134fc24c3756efaedf11e07f599494e0eff9  /usr/local/bin/dumb-init" | sha256sum -c -
+RUN curl -L -o /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_arm64
+RUN echo "45b1bbf56cc03edda81e4220535a025bfe3ed6e93562222b9be4471005b3eeb3  /usr/local/bin/dumb-init" | sha256sum -c -
 RUN chmod +x /usr/local/bin/dumb-init
 
 
