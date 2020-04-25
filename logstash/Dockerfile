@@ -8,7 +8,7 @@ RUN go get gopkg.in/yaml.v2 && \
     cd env2yaml/ && \
     go build
 
-FROM centos:7 AS prep_files
+FROM centos:8 AS prep_files
 
 RUN mkdir -p /usr/share/logstash
 
@@ -24,7 +24,7 @@ RUN yum install -y zip unzip && \
     cp -f /tmp/jruby-complete-9.2.9.0.jar /usr/share/logstash/logstash-core/lib/jars/jruby-complete-9.2.9.0.jar
 
 # This Dockerfile was generated from templates/Dockerfile.j2
-FROM centos:7
+FROM centos:8
 
 # Install Java and the "which" command, which is needed by Logstash's shell
 # scripts.

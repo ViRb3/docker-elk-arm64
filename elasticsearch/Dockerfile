@@ -11,7 +11,7 @@
 # Set gid=0 and make group perms==owner perms
 ################################################################################
 
-FROM centos:7 AS builder
+FROM centos:8 AS builder
 
 RUN for iter in {1..10}; do yum update --setopt=tsflags=nodocs -y &&     yum install --setopt=tsflags=nodocs -y gzip shadow-utils tar &&     yum clean all && exit_code=0 && break || exit_code=$? && echo "yum error: retry $iter in 10s" && sleep 10; done;     (exit $exit_code)
 
@@ -39,7 +39,7 @@ RUN chmod 0660 config/elasticsearch.yml config/log4j2.properties
 # Add entrypoint
 ################################################################################
 
-FROM centos:7 AS base
+FROM centos:8 AS base
 
 ENV ELASTIC_CONTAINER true
 
